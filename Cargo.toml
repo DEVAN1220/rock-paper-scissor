@@ -1,0 +1,8 @@
+[package]
+name = "rps"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+raylib = "5.0.1"
+rand = "*"
