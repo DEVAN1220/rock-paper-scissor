@@ -24,10 +24,46 @@ struct Object {
     position: Vector2,
 }
 
+
+
+fn main() {
+    let  (mut rl, thread) = raylib::init()
+        .size(WINDOW_WIDTH, WINDOW_HEIGHT)
+        .title("rock paper scissor")
+        .build();
+
+    rl.set_target_fps(60);
+    let mut rng = rand::thread_rng();
+    let mut objects: Vec<Object>  = vec![];
+    for _i in 1..5 {
+        objects.push(Object::new(ObjectTypes::Rock,Vector2 { x: rng.gen_range(SIZE..WINDOW_WIDTH as f32), y: rng.gen_range(SIZE..WINDOW_HEIGHT as f32)}));
+        objects.push(Object::new(ObjectTypes::Paper,Vector2 { x: rng.gen_range(SIZE..WINDOW_WIDTH as f32), y: rng.gen_range(SIZE..WINDOW_HEIGHT as f32)}));
+        objects.push(Object::new(ObjectTypes::Scissor,Vector2 { x: rng.gen_range(SIZE..WINDOW_WIDTH as f32), y: rng.gen_range(SIZE..WINDOW_HEIGHT as f32)}));
+
+    }
+
+    let mut objects_clone = objects.clone();
+    while !rl.window_should_close() {
+        // if rl.is_mouse_button_pressed(MouseButton::MOUSE_BUTTON_LEFT) {
+        //     x = rl.get_mouse_x();
+        //     y = rl.get_mouse_y();
+        //     println!("x: {}, y: {}",x, y);
+        // }
+
+        objects_clone = objects.clone();
+        let mut d = rl.begin_drawing(&thread);
+        for object in &mut objects {
+            object.update(&mut objects_clone);
+            object.draw(&mut d)
+        }
+        d.clear_background(Color::WHITE);
+    }
+}
+
 impl Object {
 
     fn new(types: ObjectTypes, pos: Vector2) -> Object {
-        return Object { obj_type: types, position: pos};
+        Object { obj_type: types, position: pos}
     }
     fn beatable(&self) -> ObjectTypes {
         // if &self.obj_type == ObjectTypes::Rock {
@@ -36,9 +72,9 @@ impl Object {
         //     
         // }
         match self.obj_type {
-            ObjectTypes::Rock => return ObjectTypes::Scissor,
-            ObjectTypes::Scissor => return ObjectTypes::Paper,
-            ObjectTypes::Paper => return ObjectTypes::Rock
+            ObjectTypes::Rock => ObjectTypes::Scissor,
+            ObjectTypes::Scissor => ObjectTypes::Paper,
+            ObjectTypes::Paper => ObjectTypes::Rock
         }
     }
     fn draw(&self,d: &mut RaylibDrawHandle) {
@@ -50,8 +86,11 @@ impl Object {
         }
         d.draw_circle(self.position.x as i32, self.position.y as i32,SIZE, color);
     }
-    fn update(&mut self, objects: &Vec<Object>) {
+    fn update(&mut self, objects: &mut Vec<Object>) {
         for object in objects {
+            if object.position.distance_to(self.position) < (SIZE * 2.0) {
+                println!("collision dectected");
+            }
             if object.obj_type == self.beatable() {
                 let mut towards = Vector2 { x: (object.position.x - self.position.x), y: (object.position.y - self.position.y)};
                 towards.normalize();
@@ -76,37 +115,5 @@ impl Object {
                 }
             }
         }
-    }
-}
-
-fn main() {
-    let  (mut rl, thread) = raylib::init()
-        .size(WINDOW_WIDTH, WINDOW_HEIGHT)
-        .title("rock paper scissor")
-        .build();
-
-    rl.set_target_fps(60);
-    let mut rng = rand::thread_rng();
-    let mut objects: Vec<Object>  = vec![];
-    for i in 1..5 {
-        objects.push(Object::new(ObjectTypes::Rock,Vector2 { x: rng.gen_range(SIZE..WINDOW_WIDTH as f32), y: rng.gen_range(SIZE..WINDOW_HEIGHT as f32)}));
-        objects.push(Object::new(ObjectTypes::Paper,Vector2 { x: rng.gen_range(SIZE..WINDOW_WIDTH as f32), y: rng.gen_range(SIZE..WINDOW_HEIGHT as f32)}));
-        objects.push(Object::new(ObjectTypes::Scissor,Vector2 { x: rng.gen_range(SIZE..WINDOW_WIDTH as f32), y: rng.gen_range(SIZE..WINDOW_HEIGHT as f32)}));
-
-    }
-
-    let im_objects = objects.clone();
-    while !rl.window_should_close() {
-        // if rl.is_mouse_button_pressed(MouseButton::MOUSE_BUTTON_LEFT) {
-        //     x = rl.get_mouse_x();
-        //     y = rl.get_mouse_y();
-        //     println!("x: {}, y: {}",x, y);
-        // }
-        let mut d = rl.begin_drawing(&thread);
-        for object in &mut objects {
-            object.update(&im_objects);
-            object.draw(&mut d)
-        }
-        d.clear_background(Color::WHITE);
     }
 }
