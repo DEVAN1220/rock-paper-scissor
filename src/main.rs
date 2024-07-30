@@ -125,8 +125,7 @@ impl Object {
                 // if ny > SIZE && ny < WINDOW_HEIGHT as f32 {
                 //     self.position.y = ny;
                 // }
-            } else {
-           }
+            } 
         }
     }
     fn update_position(&mut self) {
