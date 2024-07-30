@@ -88,9 +88,12 @@ fn main() {
     rl.set_target_fps(60);
     let mut rng = rand::thread_rng();
     let mut objects: Vec<Object>  = vec![];
-    objects.push(Object::new(ObjectTypes::Rock,Vector2 { x: rng.gen_range(SIZE..WINDOW_WIDTH as f32), y: rng.gen_range(SIZE..WINDOW_HEIGHT as f32)}));
-    objects.push(Object::new(ObjectTypes::Paper,Vector2 { x: rng.gen_range(SIZE..WINDOW_WIDTH as f32), y: rng.gen_range(SIZE..WINDOW_HEIGHT as f32)}));
+    for i in 1..5 {
+        objects.push(Object::new(ObjectTypes::Rock,Vector2 { x: rng.gen_range(SIZE..WINDOW_WIDTH as f32), y: rng.gen_range(SIZE..WINDOW_HEIGHT as f32)}));
         objects.push(Object::new(ObjectTypes::Paper,Vector2 { x: rng.gen_range(SIZE..WINDOW_WIDTH as f32), y: rng.gen_range(SIZE..WINDOW_HEIGHT as f32)}));
+        objects.push(Object::new(ObjectTypes::Scissor,Vector2 { x: rng.gen_range(SIZE..WINDOW_WIDTH as f32), y: rng.gen_range(SIZE..WINDOW_HEIGHT as f32)}));
+
+    }
 
     let im_objects = objects.clone();
     while !rl.window_should_close() {
