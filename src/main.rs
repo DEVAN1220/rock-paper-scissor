@@ -89,7 +89,11 @@ impl Object {
     fn update(&mut self, objects: &mut Vec<Object>) {
         for object in objects {
             if object.position.distance_to(self.position) < (SIZE * 2.0) {
-                println!("collision dectected");
+                if object.obj_type == self.beatable() {
+                   object.obj_type = self.obj_type.clone(); 
+                } else {
+                    self.obj_type = object.obj_type.clone();
+                }
             }
             if object.obj_type == self.beatable() {
                 let mut towards = Vector2 { x: (object.position.x - self.position.x), y: (object.position.y - self.position.y)};
