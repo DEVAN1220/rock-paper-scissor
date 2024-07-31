@@ -70,11 +70,6 @@ impl Object {
         Object { obj_type: types, position: pos, velocity: Vector2 { x: 0.0, y: 0.0 }}
     }
     fn beatable(&self) -> ObjectTypes {
-        // if &self.obj_type == ObjectTypes::Rock {
-        //     
-        // } else if &self.obj_type == ObjectTypes {
-        //     
-        // }
         match self.obj_type {
             ObjectTypes::Rock => ObjectTypes::Scissor,
             ObjectTypes::Scissor => ObjectTypes::Paper,
@@ -102,29 +97,12 @@ impl Object {
             if object.obj_type == self.beatable() {
                 let mut towards = Vector2 { x: (object.position.x - self.position.x), y: (object.position.y - self.position.y)};
                 towards.normalize();
-               //  let nx = self.velocity.x + towards.x * 0.5;
-               //  let ny = self.velocity.y + towards.y * 0.5;
-               // if nx > SIZE && nx < WINDOW_WIDTH as f32 {
                 self.velocity.x = 0.0;
                 self.velocity.y = 0.0;
  
                     self.velocity.x += towards.x * 0.5;
-                //}
-               // if ny > SIZE && ny < WINDOW_HEIGHT as f32 {
                     self.velocity.y = towards.y * 0.5;
                 self.velocity.normalize();
-               // }
-            //} else {
-                // let mut towards = Vector2 { x: (object.position.x - self.position.x), y: (object.position.y - self.position.y)};
-                // towards.normalize();
-                // let nx = self.position.x - towards.x;
-                // let ny = self.position.y - towards.y;
-                // if nx > SIZE && nx < WINDOW_WIDTH as f32 {
-                //     self.position.x = nx;
-                // }
-                // if ny > SIZE && ny < WINDOW_HEIGHT as f32 {
-                //     self.position.y = ny;
-                // }
             } 
         }
     }
