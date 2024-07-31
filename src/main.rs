@@ -38,7 +38,7 @@ fn main() {
         objects.push(Object::new(ObjectTypes::Scissor,Vector2 { x: rng.gen_range(SIZE..WINDOW_WIDTH as f32), y: rng.gen_range(SIZE..WINDOW_HEIGHT as f32)}));
 
     }
-    let mut has_ended: bool;
+    let mut has_ended: bool = false;
     let mut objects_clone: Vec<Object>;
     while !rl.window_should_close() {
         // if rl.is_mouse_button_pressed(MouseButton::MOUSE_BUTTON_LEFT) {
@@ -46,9 +46,14 @@ fn main() {
         //     y = rl.get_mouse_y();
         //     println!("x: {}, y: {}",x, y);
         // }
+        
+        let mut d = rl.begin_drawing(&thread);
+        if has_ended {
+            d.draw_text("game has ended", 10, 10, 20, Color::BLACK);
+            continue;
+        }
         let mut cur: ObjectTypes;
         objects_clone = objects.clone();
-        let mut d = rl.begin_drawing(&thread);
         has_ended = true;
         for object in &mut objects {
             cur = objects_clone[0].obj_type.clone();
@@ -60,7 +65,7 @@ fn main() {
             object.draw(&mut d)
         }
         d.clear_background(Color::WHITE);
-        if has_ended {break;}
+        
     }
 }
 
