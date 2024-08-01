@@ -28,8 +28,12 @@ fn main() {
         .size(WINDOW_WIDTH, WINDOW_HEIGHT)
         .title("rock paper scissor")
         .build();
-
     rl.set_target_fps(60);
+
+    let mut rock_tex = rl.load_texture(&thread, "assets/rock.png").unwrap();
+    let paper_tex = rl.load_texture(&thread, "assets/paper.png").unwrap();
+    let scissor_tex = rl.load_texture(&thread, "assets/scissor.png").unwrap();
+
     let mut rng = rand::thread_rng();
     let mut objects: Vec<Object>  = vec![];
     for _i in 1..20 {
@@ -39,6 +43,7 @@ fn main() {
 }
     let mut has_ended: bool = false;
     let mut objects_clone: Vec<Object>;
+
     while !rl.window_should_close() {
         // if rl.is_mouse_button_pressed(MouseButton::MOUSE_BUTTON_LEFT) {
         //     x = rl.get_mouse_x();
@@ -54,14 +59,18 @@ fn main() {
         let mut cur: ObjectTypes;
         objects_clone = objects.clone();
         has_ended = true;
-        for object in &mut objects {
+               for object in &mut objects {
             cur = objects_clone[0].obj_type.clone();
             if object.obj_type != cur {
                has_ended = false; 
             }
             object.update_velocity(&mut objects_clone,  Some(&mut rng) );
             object.update_position();
-            object.draw(&mut d)
+            match object.obj_type {
+                ObjectTypes::Rock =>    object.draw(&mut d, &rock_tex),
+                ObjectTypes::Paper => object.draw(&mut d, &paper_tex),
+                ObjectTypes::Scissor => object.draw(&mut d, &scissor_tex)
+            }
         }
         d.clear_background(Color::WHITE);
         
@@ -75,18 +84,21 @@ impl Object {
     }
     fn beatable(&self) -> ObjectTypes {
         match self.obj_type {
-            ObjectTypes::Rock => ObjectTypes::Scissor,
-            ObjectTypes::Scissor => ObjectTypes::Paper,
-            ObjectTypes::Paper => ObjectTypes::Rock
+            ObjectTypes::Rock =>    ObjectTypes::Scissor,
+            ObjectTypes::Paper =>   ObjectTypes::Rock,
+            ObjectTypes::Scissor => ObjectTypes::Paper 
         }
     }
-    fn draw(&self,d: &mut RaylibDrawHandle) {
+    fn draw(&self,d: &mut RaylibDrawHandle, tex: &Texture2D) {
         let color: Color = match self.obj_type {
-            ObjectTypes::Rock => Color::BLACK,
-            ObjectTypes::Paper => Color::GRAY,
+            ObjectTypes::Rock =>    Color::BLACK,
+            ObjectTypes::Paper =>   Color::GRAY,
             ObjectTypes::Scissor => Color::RED
         };
-        d.draw_circle(self.position.x as i32, self.position.y as i32,SIZE, color);
+//        d.draw_circle(self.position.x as i32, self.position.y as i32,SIZE, color);
+        d.draw_texture_pro(&tex, Rectangle{x:0.0,y:0.0,width:10.0,height:10.0}, Rectangle{x:self.position.x,y:self.position.y,width:15.0,height:15.0},
+            Vector2::zero(),0.0, Color::WHITE);
+
     }
     fn update_velocity(&mut self, objects: &mut Vec<Object>, mut rng: Option<&mut ThreadRng>) {
         for object in objects {
