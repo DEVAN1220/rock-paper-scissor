@@ -30,7 +30,7 @@ fn main() {
         .build();
     rl.set_target_fps(60);
 
-    let mut rock_tex = rl.load_texture(&thread, "assets/rock.png").unwrap();
+    let rock_tex = rl.load_texture(&thread, "assets/rock.png").unwrap();
     let paper_tex = rl.load_texture(&thread, "assets/paper.png").unwrap();
     let scissor_tex = rl.load_texture(&thread, "assets/scissor.png").unwrap();
 
@@ -90,12 +90,7 @@ impl Object {
         }
     }
     fn draw(&self,d: &mut RaylibDrawHandle, tex: &Texture2D) {
-        let color: Color = match self.obj_type {
-            ObjectTypes::Rock =>    Color::BLACK,
-            ObjectTypes::Paper =>   Color::GRAY,
-            ObjectTypes::Scissor => Color::RED
-        };
-//        d.draw_circle(self.position.x as i32, self.position.y as i32,SIZE, color);
+        //        d.draw_circle(self.position.x as i32, self.position.y as i32,SIZE, color);
         d.draw_texture_pro(&tex, Rectangle{x:0.0,y:0.0,width:10.0,height:10.0}, Rectangle{x:self.position.x,y:self.position.y,width:15.0,height:15.0},
             Vector2::zero(),0.0, Color::WHITE);
 
