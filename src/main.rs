@@ -36,8 +36,7 @@ fn main() {
         objects.push(Object::new(ObjectTypes::Rock,Vector2 { x: rng.gen_range(SIZE..WINDOW_WIDTH as f32), y: rng.gen_range(SIZE..WINDOW_HEIGHT as f32)}));
         objects.push(Object::new(ObjectTypes::Paper,Vector2 { x: rng.gen_range(SIZE..WINDOW_WIDTH as f32), y: rng.gen_range(SIZE..WINDOW_HEIGHT as f32)}));
         objects.push(Object::new(ObjectTypes::Scissor,Vector2 { x: rng.gen_range(SIZE..WINDOW_WIDTH as f32), y: rng.gen_range(SIZE..WINDOW_HEIGHT as f32)}));
-
-    }
+}
     let mut has_ended: bool = false;
     let mut objects_clone: Vec<Object>;
     while !rl.window_should_close() {
@@ -82,12 +81,11 @@ impl Object {
         }
     }
     fn draw(&self,d: &mut RaylibDrawHandle) {
-        let color: Color;
-        match self.obj_type {
-            ObjectTypes::Rock => color = Color::BLACK,
-            ObjectTypes::Paper => color = Color::GRAY,
-            ObjectTypes::Scissor => color = Color::RED
-        }
+        let color: Color = match self.obj_type {
+            ObjectTypes::Rock => Color::BLACK,
+            ObjectTypes::Paper => Color::GRAY,
+            ObjectTypes::Scissor => Color::RED
+        };
         d.draw_circle(self.position.x as i32, self.position.y as i32,SIZE, color);
     }
     fn update_velocity(&mut self, objects: &mut Vec<Object>) {
@@ -102,13 +100,13 @@ impl Object {
             if object.obj_type == self.beatable() {
                 let mut towards = Vector2 { x: (object.position.x - self.position.x), y: (object.position.y - self.position.y)};
                 towards.normalize();
-                self.velocity.x = 0.0;
-                self.velocity.y = 0.0;
- 
-                self.velocity.x += towards.x * 0.5;
-                self.velocity.y = towards.y * 0.5;
+ //                self.velocity.x = 0.0;
+ //                self.velocity.y = 0.0;
+ // 
+                self.velocity.x += towards.x * 1.5;
+                self.velocity.y += towards.y * 1.5;
                 self.velocity.normalize();
-            } 
+            }  
         }
     }
     fn update_position(&mut self) {
