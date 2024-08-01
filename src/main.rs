@@ -98,7 +98,7 @@ impl Object {
                 }
             }
             if object.obj_type == self.beatable() {
-                let mut towards = Vector2 { x: (object.position.x - self.position.x), y: (object.position.y - self.position.y)};
+                let mut towards = Vector2 { x: (object.position.x - self.position.x) * 2.0, y: (object.position.y - self.position.y) * 2.0};
                 towards.normalize();
                 if rng.is_some() {
                     let th = rng.as_mut().unwrap();
