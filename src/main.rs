@@ -1,5 +1,5 @@
 use raylib::prelude::*;
-use rand::Rng;
+use rand::{rngs::ThreadRng, Rng};
 
 
 const WINDOW_WIDTH: i32 = 640;
@@ -59,7 +59,7 @@ fn main() {
             if object.obj_type != cur {
                has_ended = false; 
             }
-            object.update_velocity(&mut objects_clone);
+            object.update_velocity(&mut objects_clone,  Some(&mut rng) );
             object.update_position();
             object.draw(&mut d)
         }
@@ -88,7 +88,7 @@ impl Object {
         };
         d.draw_circle(self.position.x as i32, self.position.y as i32,SIZE, color);
     }
-    fn update_velocity(&mut self, objects: &mut Vec<Object>) {
+    fn update_velocity(&mut self, objects: &mut Vec<Object>, mut rng: Option<&mut ThreadRng>) {
         for object in objects {
             if object.position.distance_to(self.position) < (SIZE * 2.0) {
                 if object.obj_type == self.beatable() {
@@ -100,17 +100,21 @@ impl Object {
             if object.obj_type == self.beatable() {
                 let mut towards = Vector2 { x: (object.position.x - self.position.x), y: (object.position.y - self.position.y)};
                 towards.normalize();
- //                self.velocity.x = 0.0;
- //                self.velocity.y = 0.0;
- // 
-                self.velocity.x += towards.x * 1.5;
-                self.velocity.y += towards.y * 1.5;
+                if rng.is_some() {
+                    let th = rng.as_mut().unwrap();
+                    towards.x += th.gen_range(-2.0..2.0);
+                    towards.y += th.gen_range(-2.0..2.0);
+                }
+                self.velocity.x += towards.x;
+                self.velocity.y += towards.y;
                 self.velocity.normalize();
-            }  
-        }
+             } 
+        } 
     }
     fn update_position(&mut self) {
-        self.position.x += self.velocity.x;
-        self.position.y += self.velocity.y;
+        let nx = self.position.x + self.velocity.x;
+        let ny = self.position.y + self.velocity.y;
+        if nx < WINDOW_WIDTH as f32 && nx > SIZE { self.position.x = nx; };
+        if ny < WINDOW_HEIGHT as f32 && ny > SIZE { self.position.y = ny; };
     }
 }
